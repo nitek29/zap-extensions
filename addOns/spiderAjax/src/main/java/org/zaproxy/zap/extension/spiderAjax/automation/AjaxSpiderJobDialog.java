@@ -19,7 +19,20 @@
  */
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
-import java.awt.Component;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.spiderAjax.*;
+import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElementsPanel;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.view.StandardFieldsDialog;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -27,21 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import javax.swing.JTextField;
-import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.commonlib.Constants;
-import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
-import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderMultipleOptionsPanel;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
-import org.zaproxy.zap.extension.spiderAjax.OptionsAjaxSpiderTableModel;
-import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
-import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElementsPanel;
-import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
 public class AjaxSpiderJobDialog extends StandardFieldsDialog {
@@ -86,6 +84,11 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     private static final String CLICK_ELEMS_HEADER =
             "spiderajax.automation.dialog.ajaxspider.clickelems";
 
+    private static final String ALLOWED_RESOURCES_PARAM =
+            "spiderajax.automation.dialog.ajaxspider.allowedresources";
+
+    private AllowedResourcesTableModel allowedResourcesTableModel;
+
     private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
 
     private OptionsAjaxSpiderTableModel ajaxSpiderClickModel;
@@ -101,6 +104,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                 TITLE,
                 DisplayUtils.getScaledDimension(450, 500),
                 TAB_LABELS);
+        this.allowedResourcesTableModel = new AllowedResourcesTableModel();
         this.job = job;
         this.addTextField(0, NAME_PARAM, this.job.getName());
         List<String> contextNames = this.job.getEnv().getContextNames();
@@ -232,6 +236,34 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
         setClickElemsEnabled(!clickDefaultElements);
         setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
+
+        allowedResourcesTableModel.setAllowedResources(this.job.getParameters().getAllowedResources());
+        AllowedResourcesPanel allowedResourcesPanel =
+                new AllowedResourcesPanel(this, allowedResourcesTableModel);
+        allowedResourcesPanel.setRemoveWithoutConfirmation(
+                !this.job.getParameters().isConfirmRemoveAllowedResource());
+        addCustomComponent(1, allowedResourcesPanel);
+
+        this.addCustomComponent(1, createAllowedResourcesPanel());
+
+        //this.job.getParameters().setAllowedResources(this.getStringValue(ALLOWED_RESOURCES_PARAM));
+
+
+    }
+
+    private JPanel createAllowedResourcesPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        GridBagConstraints constraints = new GridBagConstraints();
+        constraints.anchor = GridBagConstraints.WEST;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+
+        JLabel allowedResourcesLabel = new JLabel("Allowed Resources");
+        panel.add(allowedResourcesLabel, constraints);
+
+        // Ajoutez des champs texte et des boutons pour saisir les informations sur les ressources autorisées ici
+
+        return panel;
     }
 
     private int getInt(Integer i, int defaultValue) {
@@ -330,6 +362,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
+
         this.job.setName(this.getStringValue(NAME_PARAM));
         this.job.getParameters().setContext(this.getStringValue(CONTEXT_PARAM));
         this.job.getParameters().setUser(this.getStringValue(USER_PARAM));
@@ -339,6 +372,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setNumberOfBrowsers(this.getIntValue(NUM_BROWSERS_PARAM));
         this.job.getParameters().setInScopeOnly(this.getBoolValue(IN_SCOPE_ONLY));
         this.job.getParameters().setRunOnlyIfModern(this.getBoolValue(ONLY_IF_MODERN));
+        this.job.getParameters().setAllowedResources(allowedResourcesTableModel.getElements());
+
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             String browserName = this.getStringValue(BROWSER_ID_PARAM);

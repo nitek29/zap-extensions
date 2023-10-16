@@ -20,25 +20,13 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.automation.AutomationData;
-import org.zaproxy.addon.automation.AutomationEnvironment;
-import org.zaproxy.addon.automation.AutomationJob;
-import org.zaproxy.addon.automation.AutomationProgress;
-import org.zaproxy.addon.automation.ContextWrapper;
-import org.zaproxy.addon.automation.JobResultData;
+import org.zaproxy.addon.automation.*;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
@@ -46,15 +34,16 @@ import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
-import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
-import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
-import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
-import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.spiderAjax.*;
 import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
+
+import java.net.URI;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class AjaxSpiderJob extends AutomationJob {
 
@@ -70,6 +59,8 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
     private static final String PARAM_EXCLUDED_ELEMENTS = "excludedElements";
+
+    private static final String PARAM_ALLOWED_RESOURCES = "allowedResources";
 
     private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
@@ -101,10 +92,11 @@ public class AjaxSpiderJob extends AutomationJob {
                 parametersData,
                 this.parameters,
                 this.getName(),
-                new String[] {PARAM_EXCLUDED_ELEMENTS},
+                new String[]{PARAM_EXCLUDED_ELEMENTS, PARAM_ALLOWED_RESOURCES},
                 progress);
 
         readExcludedElements(progress, parametersData);
+        readAllowedResources(progress, parametersData);
 
         if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
                 || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
@@ -140,6 +132,24 @@ public class AjaxSpiderJob extends AutomationJob {
             progress.error(
                     Constant.messages.getString(
                             "spiderajax.automation.error.excludedelements.format", getName(), e));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readAllowedResources(AutomationProgress progress, Map<?, ?> parametersData) {
+        if (parametersData == null) {
+            return;
+        }
+
+        try {
+            var allowedResourcesData = (List<AllowedResource>) parametersData.get(PARAM_ALLOWED_RESOURCES);
+            if (allowedResourcesData != null && !allowedResourcesData.isEmpty()) {
+                getParameters().setAllowedResources(allowedResourcesData);
+            }
+        } catch (Exception e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "spiderajax.automation.error.allowedresources.format", getName(), e));
         }
     }
 
@@ -203,16 +213,16 @@ public class AjaxSpiderJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {
-                    PARAM_CONTEXT,
-                    PARAM_URL,
-                    PARAM_USER,
-                    PARAM_IN_SCOPE_ONLY,
-                    PARAM_ELEMENTS,
-                    PARAM_ONLY_RUN_IF_MODERN,
-                    PARAM_FAIL_IF_LESS_URLS,
-                    PARAM_WARN_IF_LESS_URLS,
-                    PARAM_EXCLUDED_ELEMENTS
+                new String[]{
+                        PARAM_CONTEXT,
+                        PARAM_URL,
+                        PARAM_USER,
+                        PARAM_IN_SCOPE_ONLY,
+                        PARAM_ELEMENTS,
+                        PARAM_ONLY_RUN_IF_MODERN,
+                        PARAM_FAIL_IF_LESS_URLS,
+                        PARAM_WARN_IF_LESS_URLS,
+                        PARAM_EXCLUDED_ELEMENTS
                 },
                 progress,
                 this.getPlan().getEnv());
@@ -223,6 +233,12 @@ public class AjaxSpiderJob extends AutomationJob {
             this.parameters.getElements().forEach(e -> elems.add(new AjaxSpiderParamElem(e)));
             this.getExtSpider().getAjaxSpiderParam().setElems(elems);
         }
+        if (this.getParameters().getAllowedResources() != null) {
+            getExtSpider()
+                    .getAjaxSpiderParam()
+                    .setAllowedResources(this.getParameters().getAllowedResources());
+        }
+
 
         ContextWrapper context = getContextWrapper(getPlan().getEnv(), progress);
         if (context != null) {
@@ -241,6 +257,7 @@ public class AjaxSpiderJob extends AutomationJob {
         map.put(PARAM_URL, "");
         map.put(PARAM_USER, "");
         map.put(PARAM_ONLY_RUN_IF_MODERN, Boolean.FALSE.toString());
+        map.put(PARAM_ALLOWED_RESOURCES, "");
         return map;
     }
 
@@ -434,7 +451,8 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         @Override
-        public void spiderStarted() {}
+        public void spiderStarted() {
+        }
 
         @Override
         public void foundMessage(
@@ -443,7 +461,8 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         @Override
-        public void spiderStopped() {}
+        public void spiderStopped() {
+        }
     }
 
     @Override
@@ -540,7 +559,52 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
 
-        public Parameters() {}
+        private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
+        private static final String ALL_ALLOWED_RESOURCES_KEY =
+                AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
+
+        private static final String ALLOWED_RESOURCE_REGEX_KEY = "regex";
+
+        private static final String ALLOWED_RESOURCE_ENABLED_KEY = "enabled";
+
+        private static final String CONFIRM_REMOVE_ALLOWED_RESOURCE =
+                AJAX_SPIDER_BASE_KEY + ".confirmRemoveAllowedResource";
+
+        private static final List<AllowedResource> DEFAULT_ALLOWED_RESOURCES =
+                Arrays.asList(
+                        new AllowedResource(
+                                AllowedResource.createDefaultPattern("^http.*\\.js(?:\\?.*)?$")),
+                        new AllowedResource(
+                                AllowedResource.createDefaultPattern("^http.*\\.css(?:\\?.*)?$")));
+
+        private List<AllowedResource> allowedResources = Collections.emptyList();
+
+        public List<AllowedResource> getAllowedResources() {
+            return allowedResources;
+        }
+
+        public void setAllowedResources(List<AllowedResource> allowedResources) {
+            this.allowedResources = allowedResources;
+        }
+
+        private boolean confirmRemoveAllowedResource;
+
+        @ZapApiIgnore
+        public boolean isConfirmRemoveAllowedResource() {
+            return this.confirmRemoveAllowedResource;
+        }
+
+        @ZapApiIgnore
+        public void setConfirmRemoveAllowedResource(boolean confirmRemove) {
+            this.confirmRemoveAllowedResource = confirmRemove;
+        /*getConfig()
+                .setProperty(
+                        CONFIRM_REMOVE_ALLOWED_RESOURCE,
+                        Boolean.valueOf(confirmRemoveAllowedResource));*/
+        }
+
+        public Parameters() {
+        }
 
         public String getContext() {
             return context;

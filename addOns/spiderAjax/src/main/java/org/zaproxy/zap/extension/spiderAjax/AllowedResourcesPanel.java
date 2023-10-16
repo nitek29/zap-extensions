@@ -19,16 +19,14 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
-import java.awt.BorderLayout;
-import java.awt.Dialog;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
-class AllowedResourcesPanel extends AbstractMultipleOptionsTablePanel<AllowedResource> {
+import javax.swing.*;
+import java.awt.*;
+
+public class AllowedResourcesPanel extends AbstractMultipleOptionsTablePanel<AllowedResource> {
 
     private static final long serialVersionUID = 8762085355395403532L;
 

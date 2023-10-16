@@ -4,10 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.20.0] - 2023-10-12
 ### Added
 - Fingerprinting check for the Absinthe GraphQL engine.
 
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Dependency updates.
 
 ## [0.19.0] - 2023-09-07
@@ -160,6 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.17.0

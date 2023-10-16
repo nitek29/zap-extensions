@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [23.17.0] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+### Fixed
+- Add URL to start event.
+
 ## [23.16.0] - 2023-09-26
 ### Changed
 - Maintenance changes.
@@ -289,6 +296,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.17.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.17.0
 [23.16.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.16.0
 [23.15.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.15.0
 [23.14.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.1

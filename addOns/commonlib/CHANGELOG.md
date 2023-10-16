@@ -5,7 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [1.18.0] - 2023-10-12
 ### Changed
+- Update minimum ZAP version to 2.14.0.
+- Add solution to 'Brute Forcing Log-in Credentials', 'Brute Forcing Session Identifiers' and 'Brute Forcing Directories and Files' vulnerabilities (Issue 8056).
 - Update vulnerabilities' CWE references to use HTTPS scheme.
 
 ## [1.17.0] - 2023-09-07
@@ -117,6 +122,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.18.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.18.0
 [1.17.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.17.0
 [1.16.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.16.0
 [1.15.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.15.0

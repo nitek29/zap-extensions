@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [43] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [42] - 2023-10-04
+### Changed
+- ZAPit: carry on even if non success code returned.
+- ZAPit: scan HTTP and HTTPS if protocol not specified.
+
 ## [41] - 2023-09-28
 ### Added
 - ZAPit: report summary of all requests and responses made.
@@ -219,6 +228,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v39

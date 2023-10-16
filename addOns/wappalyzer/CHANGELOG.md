@@ -4,7 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Updated with last AliasIO/Wappalyzer icon and pattern changes.
 
+## [21.25.0] - 2023-10-13
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Moved from Apache batik libraries to weisJ's jsvg library (thus reducing the size of the add-on).
 
 ## [21.24.0] - 2023-09-07
 ### Changed
@@ -297,6 +303,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.25.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.25.0
 [21.24.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.24.0
 [21.23.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.23.0
 [21.22.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.22.0

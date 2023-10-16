@@ -4,6 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [42] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [41] - 2023-10-04
+### Added
+- Allow selecting a default behaviour when a script in the console changes on disk (Issues 5463, 7582). The allowed
+  options are "Ask Each Time", "Keep Script", and "Replace Script".
+
 ### Changed
 - Update extender template scripts to also work with Graal.js engine.
 
@@ -252,6 +263,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/scripts-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/scripts-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/scripts-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/scripts-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/scripts-v38

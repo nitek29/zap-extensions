@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [42] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Update Zest library to 0.20.0:
+  - Update Selenium to version 4.14.0.
+
 ## [41] - 2023-09-26
 ### Added
 - Allow rendering Zest scripts in YAML. The format (JSON/YAML) may be changed via the Zest Options screen.
@@ -304,6 +310,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/zest-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/zest-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/zest-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/zest-v39

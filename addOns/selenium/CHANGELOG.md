@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [15.15.0] - 2023-10-12
+### Changed
+- Update Selenium to version 4.14.0.
+- Update minimum ZAP version to 2.14.0.
+
 ## [15.14.0] - 2023-09-26
 ### Added
 - Add statistics for browser launch successes and failures that include the requester, e.g.:
@@ -188,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.15.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.15.0
 [15.14.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.14.0
 [15.13.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.13.0
 [15.12.1]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.12.1
